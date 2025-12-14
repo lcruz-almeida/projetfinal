@@ -217,57 +217,50 @@ function toggleFire() {
 }
 
 // ========================= LUMIÈRE =========================
+// ===================== BOTÃO LUMIÈRE =====================
 let lumiereActive = false;
-let sabreLight = null;
+let magicLight = null; // elemento único da luz
 
 function toggleLumiere() {
-    if (!isOpen) return;
+    if (!isOpen) return; // só funciona se o livro estiver aberto
 
     const audio = document.getElementById("soundLumiere");
 
     if (!lumiereActive) {
-        stopAllEffects(); // desativa outros efeitos
+        stopAllEffects(); // para qualquer outro efeito ativo
 
-        // Cria um único sabre de luz
-        sabreLight = document.createElement('div');
-        sabreLight.classList.add('magic-light');
+        // Cria o feixe branco intenso
+        magicLight = document.createElement('div');
+        magicLight.classList.add('magic-light');
 
         const bookRect = bookContainer.getBoundingClientRect();
-        const lightWidth = 20;
-        const lightHeight = 300;
+        const lightWidth = 25;
+        const lightHeight = 400;
 
         // Centraliza no livro
         const x = bookRect.left + bookRect.width / 2 - lightWidth / 2;
         const y = bookRect.top + bookRect.height / 2 - lightHeight / 2;
 
-        sabreLight.style.left = `${x}px`;
-        sabreLight.style.top = `${y}px`;
+        magicLight.style.left = `${x}px`;
+        magicLight.style.top = `${y}px`;
 
-        document.body.appendChild(sabreLight);
+        document.body.appendChild(magicLight);
 
-        // Toca o som
-        if (audio) {
-            audio.currentTime = 0;
-            audio.play().catch(e => console.log("Erro de áudio: " + e));
-        }
+        // Toca som
+        if (audio) { audio.currentTime = 0; audio.play().catch(e => console.log("Erro de áudio")); }
 
         lumiereActive = true;
     } else {
-        // Remove o sabre de luz
-        if (sabreLight) {
-            sabreLight.remove();
-            sabreLight = null;
-        }
+        // Remove o feixe
+        if (magicLight) { magicLight.remove(); magicLight = null; }
 
-        // Para o som
-        if (audio) {
-            audio.pause();
-            audio.currentTime = 0;
-        }
+        // Para som
+        if (audio) { audio.pause(); audio.currentTime = 0; }
 
         lumiereActive = false;
     }
 }
+
 
 // ========================= ESCRITA =========================
 function startWriting() {
