@@ -345,16 +345,17 @@ button:hover { background: var(--gold); color: #000; transform: scale(1.05); }
 
 /* LUMIÈRE */
 .magic-light {
-    width: 25px;                  /* um pouco mais grosso para destacar */
-    height: 400px;                 /* altura suficiente para cobrir o livro */
+    width: 25px;
+    height: 400px;
     background: linear-gradient(to top, rgba(255,255,255,1) 0%, rgba(255,255,255,0.8) 70%, rgba(255,255,255,0) 100%);
     border-radius: 12px;
     pointer-events: none;
     position: absolute;
-    z-index: 150;                  /* acima do livro e da maioria dos efeitos */
-    filter: blur(12px) brightness(6); /* brilho intenso e visível */
+    z-index: 150;
+    filter: blur(12px) brightness(6);
     transform-origin: center bottom;
 }
+
 
 
 
