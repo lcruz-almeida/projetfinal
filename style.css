@@ -356,6 +356,15 @@ button:hover { background: var(--gold); color: #000; transform: scale(1.05); }
     transform-origin: center bottom;
 }
 
+@keyframes glowPulse {
+  0%, 100% { filter: blur(12px) brightness(6); }
+  50% { filter: blur(15px) brightness(7); }
+}
+
+.magic-light {
+    animation: glowPulse 1s infinite alternate;
+}
+
 
 
 
