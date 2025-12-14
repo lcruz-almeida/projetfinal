@@ -1,0 +1,387 @@
+:root {
+  --bg-radial-center: #d49a9a;
+  --bg-radial-edge: #732f2f;
+  --book-color: #4a1212;
+  --gold: #ffffff;
+  --page-color: #ffffff;
+  --text-color: #ffffff;
+  --star-opacity: 0;
+  --library-opacity: 1;
+}
+
+body.dark-mode {
+  --bg-radial-center: #e0e0e0;
+  --bg-radial-edge: #2a2a2a;
+  --book-color: #888888;
+  --gold: #e0e0e0;
+  --page-color: #f2f2f2;
+  --text-color: #000000;
+  --star-opacity: 4;
+  --library-opacity: 0;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #000;
+  font-family: 'Georgia', serif;
+  overflow: hidden;
+  perspective: 2000px;
+}
+
+.library-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, var(--bg-radial-center), var(--bg-radial-edge));
+  opacity: var(--library-opacity);
+  transition: opacity 1.5s ease;
+  z-index: -2;
+}
+
+.stars-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+  opacity: var(--star-opacity);
+  transition: opacity 2s ease-in-out;
+}
+
+body:not(.dark-mode) .stars-container {
+  opacity: 0 !important;
+}
+
+.stars-layer {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 10px 10px, #fff, transparent), radial-gradient(1px 1px at 50px 80px, #fff, transparent),
+    radial-gradient(2px 2px at 120px 30px, #eee, transparent), radial-gradient(2px 2px at 180px 150px, #fff, transparent),
+    radial-gradient(1px 1px at 250px 90px, #ddd, transparent), radial-gradient(1px 1px at 300px 200px, #fff, transparent),
+    radial-gradient(2px 2px at 400px 150px, #eee, transparent), radial-gradient(1px 1px at 500px 250px, #fff, transparent),
+    radial-gradient(2px 2px at 600px 100px, #ddd, transparent), radial-gradient(1px 1px at 700px 300px, #fff, transparent),
+    radial-gradient(1px 1px at 800px 50px, #eee, transparent), radial-gradient(2px 2px at 900px 220px, #fff, transparent),
+    radial-gradient(1px 1px at 50px 450px, #ddd, transparent), radial-gradient(2px 2px at 200px 350px, #fff, transparent),
+    radial-gradient(1px 1px at 450px 600px, #eee, transparent), radial-gradient(2px 2px at 650px 400px, #fff, transparent);
+  background-repeat: repeat;
+  animation: moveStars linear infinite;
+}
+
+.layer-1 { background-size: 500px 500px; animation-duration: 60s; opacity: 1; }
+.layer-2 { background-size: 800px 800px; animation-duration: 100s; opacity: 1.2; }
+.layer-3 { background-size: 400px 400px; animation-duration: 150s; opacity: 1.5; }
+
+@keyframes moveStars {
+  from { transform: translateY(0); }
+  to { transform: translateY(-100%); }
+}
+
+.controls { position: absolute; top: 30px; z-index: 100; }
+
+button {
+  padding: 12px 25px;
+  border: 2px solid var(--gold);
+  border-radius: 30px;
+  background: rgba(0,0,0,0.6);
+  color: var(--gold);
+  font-family: 'Georgia', serif;
+  font-size: 1em;
+  cursor: pointer;
+  transition: 0.3s;
+  backdrop-filter: blur(5px);
+}
+
+button:hover { background: var(--gold); color: #000; transform: scale(1.05); }
+
+.book-container {
+  position: relative;
+  width: 320px;
+  height: 460px;
+  transform-style: preserve-3d;
+  cursor: pointer;
+  transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.book-container.open { transform: translateX(160px); }
+
+.book {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.page {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  transform-origin: left;
+  transform-style: preserve-3d;
+  border-radius: 4px 12px 12px 4px;
+  background: var(--page-color);
+  box-shadow: inset 15px 0 30px rgba(0,0,0,0.1), 2px 0 5px rgba(0,0,0,0.1);
+  transition: transform 2s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.inner-page {
+  background-image:
+    radial-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+    radial-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+  background-size: 10px 10px;
+  background-position: 0 0, 5px 5px;
+}
+
+.front-cover {
+  background: var(--book-color);
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 5px solid var(--gold);
+  transition: background-color 1s, transform 2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cover-content {
+  text-align: center;
+  padding: 30px;
+  border-radius: 10px;
+  color: var(--gold);
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+}
+
+.back-cover {
+  background: var(--book-color);
+  z-index: 0;
+  transform: translateZ(-30px);
+  box-shadow: 20px 20px 60px rgba(0,0,0,0.5);
+  transition: background-color 1s;
+}
+
+.spine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 30px;
+  height: 100%;
+  background: #3e2723;
+  transform: rotateY(-90deg) translateX(-15px);
+  transform-origin: left;
+}
+
+#particleOrigin {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 1px;       /* antes era 0 */
+    height: 1px;      /* antes era 0 */
+    pointer-events: none;
+}
+
+
+
+.p1 { z-index: 15; }
+.p2 { z-index: 14; }
+.p3 { z-index: 13; display: flex; align-items: center; justify-content: center; text-align: center; padding: 20px; box-sizing: border-box; }
+
+
+.book-container.open .front-cover {
+  transform: rotateY(-180deg);
+  transition-delay: 0s;
+}
+
+.book-container.open .p1 { transform: rotateY(-170deg); transition-delay: 0.3s; }
+.book-container.open .p2 { transform: rotateY(-150deg); transition-delay: 0.3s; }
+.book-container.open .p3 { transform: rotateY(-10deg); transition-delay: 0.3s; background: linear-gradient(to right, #ddd, var(--page-color) 10%); border-left: none; }
+
+/* --- VENT --- */
+.page.fly {
+  position: absolute;
+  transform-origin: center;
+  animation: flyPage 3s ease-out forwards;
+  z-index: 1000;
+}
+
+@keyframes flyPage {
+  0% { transform: rotateY(0deg) rotateX(0deg) translate(0,0); opacity: 1; }
+  25% { transform: rotateY(90deg) rotateX(20deg) translate(30px,-50px); opacity: 0.9; }
+  50% { transform: rotateY(180deg) rotateX(60deg) translate(100px,-150px); opacity: 0.7; }
+  75% { transform: rotateY(270deg) rotateX(120deg) translate(200px,-250px); opacity: 0.5; }
+  100% { transform: rotateY(360deg) rotateX(180deg) translate(300px,-400px); opacity: 0; }
+}
+
+/* --- PARTICULES --- */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 999;
+  mix-blend-mode: screen;
+  will-change: transform, opacity;
+}
+
+@keyframes floatUp {
+  0% { opacity: 0; transform: translate(0, 0) scale(0); }
+  10% { opacity: 1; transform: translate(var(--tx), -50px) scale(1); }
+  100% { opacity: 0; transform: translate(var(--tx-end), -600px) scale(0); }
+}
+
+
+/* --- SECOUER--- */
+@keyframes shakeOpen {
+  0% { transform: translate(0,0) rotate(0deg); }
+  25% { transform: translate(5px,-5px) rotate(-5deg); }
+  50% { transform: translate(-5px,5px) rotate(5deg); }
+  75% { transform: translate(5px,-5px) rotate(-5deg); }
+  100% { transform: translate(0,0) rotate(0deg); }
+}
+
+.shake { 
+    animation: shakeOpen 2s; 
+}
+
+
+
+/* --- FEU --- */
+.fire-container {
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    transform: translate(-50%, -40%);
+    width: 250px;
+    height: 350px;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+/* FLAMMES INDIVIDUELLES */
+.flame {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 120px;
+    height: 220px;
+    transform: translateX(-50%);
+    border-radius: 50% 50% 20% 20%;
+    background: radial-gradient(circle at 50% 20%,
+        #fff9c4 0%,
+        #ffd54f 40%,
+        #ff6f00 70%,
+        #d84315 90%
+    );
+    filter: blur(12px);
+    animation: flameFlicker 0.7s infinite alternate ease-in-out;
+    opacity: 0.95;
+}
+
+.flame.small {
+    width: 90px;
+    height: 170px;
+    left: 30%;
+    animation: flameFlicker 0.6s infinite alternate ease-in-out;
+}
+
+.flame.small2 {
+    width: 100px;
+    height: 190px;
+    left: 70%;
+    animation: flameFlicker 0.8s infinite alternate ease-in-out;
+}
+
+/* ANIMATION FLAMMES */
+@keyframes flameFlicker {
+    0%   { transform: translateX(-50%) scale(1,1); opacity: 0.8; }
+    50%  { transform: translateX(-48%) scale(1.2,1.1); opacity: 0.9; }
+    100% { transform: translateX(-52%) scale(1.4,1.3) translateY(-20px); opacity: 1; }
+}
+
+/* FUMÉE */
+.smoke {
+    position: absolute;
+    bottom: 100px;
+    left: 50%;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: rgba(150,150,150,0.15);
+    filter: blur(20px);
+    transform: translateX(-50%);
+    animation: smokeRise 3s linear infinite;
+}
+
+@keyframes smokeRise {
+    0%   { transform: translate(-50%,0) scale(1); opacity: 0.3; }
+    50%  { transform: translate(-50%,-50px) scale(1.5); opacity: 0.2; }
+    100% { transform: translate(-50%,-120px) scale(2.2); opacity: 0; }
+}
+
+/* ÉTINCELLES */
+.spark {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: #ffe066;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #ffd700;
+    animation: sparkRise 1.2s linear forwards;
+}
+
+@keyframes sparkRise {
+    0%   { transform: translate(0,0) scale(1); opacity: 1; }
+    50%  { transform: translate(20px,-80px) scale(0.6); opacity: 0.8; }
+    100% { transform: translate(50px,-200px) scale(0.2); opacity: 0; }
+}
+
+/* LUMIÈRE */
+.magic-light {
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255,220,100,0.9) 0%, rgba(255,200,50,0.5) 50%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    filter: blur(30px) brightness(3.5);
+    z-index: 9999;
+    animation: lightExpand 1s ease-out forwards;
+}
+
+
+
+@keyframes lightExpand {
+    0% { transform: scale(0.2); opacity: 0.8; }
+    60% { transform: scale(1.3); opacity: 1; }
+    100% { transform: scale(2); opacity: 0; } /* estava faltando o fechamento */
+}
+
+
+/* --- ECRITURE --- */
+.bouncing-letter {
+    position: absolute;
+    font-size: 24px;
+    font-family: 'Georgia', serif;
+    color: red;
+    user-select: none;
+    pointer-events: none;
+    text-shadow: 0 0 8px var(--gold), 0 0 16px var(--gold);
+    animation: bounce 3s infinite ease-in-out;
+}
+
+@keyframes bounce {
+    0%   { transform: translate(0, 0) rotate(0deg); }
+    25%  { transform: translate(20px, -30px) rotate(90deg); }
+    50%  { transform: translate(-15px, 20px) rotate(180deg); }
+    75%  { transform: translate(30px, -10px) rotate(270deg); }
+    100% { transform: translate(0, 0) rotate(360deg); }
+}
+
+
