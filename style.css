@@ -345,15 +345,16 @@ button:hover { background: var(--gold); color: #000; transform: scale(1.05); }
 
 /* LUMIÈRE */
 .magic-light {
-    width: 25px;
-    height: 400px;
+    width: 25px;              /* largura fina do feixe */
+    height: 400px;            /* altura longa para parecer um sabre de luz */
     background: linear-gradient(to top, rgba(255,255,255,1) 0%, rgba(255,255,255,0.8) 70%, rgba(255,255,255,0) 100%);
     border-radius: 12px;
-    pointer-events: none;
-    position: absolute;
-    z-index: 150;
-    filter: blur(12px) brightness(6);
+    pointer-events: none;     /* não interfere em cliques */
+    position: absolute;       /* posicionamento livre */
+    z-index: 150;             /* sempre na frente do livro */
+    filter: blur(12px) brightness(6); /* brilho intenso */
     transform-origin: center bottom;
+    animation: glowPulse 1s infinite alternate; /* pulso suave */
 }
 
 @keyframes glowPulse {
@@ -361,9 +362,6 @@ button:hover { background: var(--gold); color: #000; transform: scale(1.05); }
   50% { filter: blur(15px) brightness(7); }
 }
 
-.magic-light {
-    animation: glowPulse 1s infinite alternate;
-}
 
 
 
