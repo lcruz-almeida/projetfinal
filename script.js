@@ -169,7 +169,7 @@ function shakeBook() {
     setTimeout(() => {
         bookContainer.classList.remove('shake');
         stopSound("soundShake");
-    }, 500);
+    }, 2000);
 }
 
 // ========================= FOGO =========================
