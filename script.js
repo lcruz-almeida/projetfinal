@@ -219,23 +219,25 @@ function toggleFire() {
 // ========================= LUMIÈRE =========================
 function createMagicLight() {
     if (!isOpen) return;
+
     const light = document.createElement('div');
     light.classList.add('magic-light');
 
     const bookRect = bookContainer.getBoundingClientRect();
-    const lightWidth = 300;
-    const lightHeight = 300;
-    const x = bookRect.left + bookRect.width / 2 - lightWidth / 2 - 80;
+    const lightWidth = 20;   // mesma largura do CSS
+    const lightHeight = 300; // mesma altura do CSS
+
+    // Centraliza no livro
+    const x = bookRect.left + bookRect.width / 2 - lightWidth / 2;
     const y = bookRect.top + bookRect.height / 2 - lightHeight / 2;
 
     light.style.left = `${x}px`;
     light.style.top = `${y}px`;
-    light.style.position = 'fixed';
-    light.style.zIndex = 9999;
-    light.style.transform = 'none';
 
     document.body.appendChild(light);
-    setTimeout(() => light.remove(), 1000);
+
+    // Remove após a animação
+    setTimeout(() => light.remove(), 500);
 }
 
 function toggleLumiere(forceOff = false) {
