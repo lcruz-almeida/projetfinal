@@ -217,50 +217,49 @@ function toggleFire() {
 }
 
 // ========================= LUMIÈRE =========================
-// ===================== BOTÃO LUMIÈRE =====================
-let lumiereActive = false;
-let magicLight = null; // elemento único da luz
+function createMagicLight() {
+    if (!isOpen) return;
+    const light = document.createElement('div');
+    light.classList.add('magic-light');
 
-function toggleLumiere() {
-    if (!isOpen) return; // só funciona se o livro estiver aberto
+    const bookRect = bookContainer.getBoundingClientRect();
+    const lightWidth = 300;
+    const lightHeight = 300;
+    const x = bookRect.left + bookRect.width / 2 - lightWidth / 2 - 80;
+    const y = bookRect.top + bookRect.height / 2 - lightHeight / 2;
+
+    light.style.left = `${x}px`;
+    light.style.top = `${y}px`;
+    light.style.position = 'fixed';
+    light.style.zIndex = 9999;
+    light.style.transform = 'none';
+
+    document.body.appendChild(light);
+    setTimeout(() => light.remove(), 1000);
+}
+
+function toggleLumiere(forceOff = false) {
+    if (!isOpen) return;
 
     const audio = document.getElementById("soundLumiere");
 
-    if (!lumiereActive) {
-        stopAllEffects(); // para qualquer outro efeito ativo
-
-        // Cria o feixe branco intenso
-        magicLight = document.createElement('div');
-        magicLight.classList.add('magic-light');
-
-        const bookRect = bookContainer.getBoundingClientRect();
-        const lightWidth = 25;
-        const lightHeight = 400;
-
-        // Centraliza no livro
-        const x = bookRect.left + bookRect.width / 2 - lightWidth / 2;
-        const y = bookRect.top + bookRect.height / 2 - lightHeight / 2;
-
-        magicLight.style.left = `${x}px`;
-        magicLight.style.top = `${y}px`;
-
-        document.body.appendChild(magicLight);
-
-        // Toca som
-        if (audio) { audio.currentTime = 0; audio.play().catch(e => console.log("Erro de áudio")); }
-
-        lumiereActive = true;
-    } else {
-        // Remove o feixe
-        if (magicLight) { magicLight.remove(); magicLight = null; }
-
-        // Para som
+    if (forceOff || lumiereActive) {
         if (audio) { audio.pause(); audio.currentTime = 0; }
-
+        clearInterval(lumiereInterval);
+        lumiereInterval = null;
+        document.querySelectorAll('.magic-light').forEach(el => el.remove());
         lumiereActive = false;
+    } else {
+        if (audio) { audio.currentTime = 0; audio.play().catch(e => console.log("Erro de áudio: " + e)); }
+        lumiereInterval = setInterval(createMagicLight, 200);
+        lumiereActive = true;
     }
 }
 
+function toggleLumiereButton() {
+    stopAllEffects();
+    toggleLumiere();
+}
 
 // ========================= ESCRITA =========================
 function startWriting() {
