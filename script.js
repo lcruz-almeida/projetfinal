@@ -217,50 +217,56 @@ function toggleFire() {
 }
 
 // ========================= LUMIÈRE =========================
-function createMagicLight() {
-    if (!isOpen) return;
+let lumiereActive = false;
+let sabreLight = null;
 
-    const light = document.createElement('div');
-    light.classList.add('magic-light');
-
-    const bookRect = bookContainer.getBoundingClientRect();
-    const lightWidth = 20;   // mesma largura do CSS
-    const lightHeight = 300; // mesma altura do CSS
-
-    // Centraliza no livro
-    const x = bookRect.left + bookRect.width / 2 - lightWidth / 2;
-    const y = bookRect.top + bookRect.height / 2 - lightHeight / 2;
-
-    light.style.left = `${x}px`;
-    light.style.top = `${y}px`;
-
-    document.body.appendChild(light);
-
-    // Remove após a animação
-    setTimeout(() => light.remove(), 500);
-}
-
-function toggleLumiere(forceOff = false) {
+function toggleLumiere() {
     if (!isOpen) return;
 
     const audio = document.getElementById("soundLumiere");
 
-    if (forceOff || lumiereActive) {
-        if (audio) { audio.pause(); audio.currentTime = 0; }
-        clearInterval(lumiereInterval);
-        lumiereInterval = null;
-        document.querySelectorAll('.magic-light').forEach(el => el.remove());
-        lumiereActive = false;
-    } else {
-        if (audio) { audio.currentTime = 0; audio.play().catch(e => console.log("Erro de áudio: " + e)); }
-        lumiereInterval = setInterval(createMagicLight, 200);
-        lumiereActive = true;
-    }
-}
+    if (!lumiereActive) {
+        stopAllEffects(); // desativa outros efeitos
 
-function toggleLumiereButton() {
-    stopAllEffects();
-    toggleLumiere();
+        // Cria um único sabre de luz
+        sabreLight = document.createElement('div');
+        sabreLight.classList.add('magic-light');
+
+        const bookRect = bookContainer.getBoundingClientRect();
+        const lightWidth = 20;
+        const lightHeight = 300;
+
+        // Centraliza no livro
+        const x = bookRect.left + bookRect.width / 2 - lightWidth / 2;
+        const y = bookRect.top + bookRect.height / 2 - lightHeight / 2;
+
+        sabreLight.style.left = `${x}px`;
+        sabreLight.style.top = `${y}px`;
+
+        document.body.appendChild(sabreLight);
+
+        // Toca o som
+        if (audio) {
+            audio.currentTime = 0;
+            audio.play().catch(e => console.log("Erro de áudio: " + e));
+        }
+
+        lumiereActive = true;
+    } else {
+        // Remove o sabre de luz
+        if (sabreLight) {
+            sabreLight.remove();
+            sabreLight = null;
+        }
+
+        // Para o som
+        if (audio) {
+            audio.pause();
+            audio.currentTime = 0;
+        }
+
+        lumiereActive = false;
+    }
 }
 
 // ========================= ESCRITA =========================
