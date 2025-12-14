@@ -207,14 +207,18 @@ function stopFire() {
         sparkLoop = null;
     }
     stopSound("soundFire");
+    fireActive = false; 
 }
 
-function toggleFire() {
-    if (!isOpen) return;
-    stopAllEffects();
-    startFire();
-    fireActive = true;
+function toggleFireButton() {
+    stopAllEffects();       // para qualquer efeito ativo
+    if (!fireActive) {
+        startFire();
+        fireActive = true;
+    }
 }
+
+
 
 // ========================= LUMIÈRE =========================
 let magicLight = null; // feixe único
