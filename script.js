@@ -173,6 +173,7 @@ function shakeBook() {
 }
 
 // ========================= FOGO =========================
+// ========================= FOGO =========================
 function startFire() {
     stopFire();
 
@@ -207,16 +208,23 @@ function stopFire() {
         sparkLoop = null;
     }
     stopSound("soundFire");
-    fireActive = false; 
+    fireActive = false;
 }
 
-function toggleFireButton() {
-    stopAllEffects();       // para qualquer efeito ativo
-    if (!fireActive) {
+function toggleFire(forceOff = false) {
+    if (!isOpen) return;
+
+    if (forceOff || fireActive) {
+        stopFire();
+    } else {
+        // Para todos os outros efeitos antes de ativar o fogo
+        stopAllEffects();
+
         startFire();
         fireActive = true;
     }
 }
+
 
 
 
@@ -234,6 +242,9 @@ function toggleLumiere(forceOff = false) {
         if (audio) { audio.pause(); audio.currentTime = 0; }
         lumiereActive = false;
     } else {
+        // Para todos os outros efeitos antes de ativar
+        stopAllEffects();
+
         // Cria o feixe único
         magicLight = document.createElement('div');
         magicLight.classList.add('magic-light');
@@ -256,6 +267,7 @@ function toggleLumiere(forceOff = false) {
         lumiereActive = true;
     }
 }
+
 
 
 // ========================= ESCRITA =========================
