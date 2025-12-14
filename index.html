@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Grimoire Magique Interactif</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="stars-container">
+        <div class="stars-layer layer-1"></div>
+        <div class="stars-layer layer-2"></div>
+        <div class="stars-layer layer-3"></div>
+    </div>
+
+    <div class="library-bg"></div>
+
+    <audio id="soundPage" src="page.mp3" preload="auto"></audio>
+    <audio id="soundParticles" src="magic-wand-6214.mp3" loop preload="auto"></audio>
+    <audio id="soundShake" src="earth-rumble-6953.mp3" loop preload="auto"></audio>
+    <audio id="soundWind" src="winter-wind-402331.mp3" preload="auto"></audio>
+    <audio id="soundFire" src="fire-33178.mp3" loop preload="auto"></audio>
+    <audio id="soundLumiere" src="lightsaber-ignition-6816.mp3"></audio>
+    <audio id="soundWriting" src="healing-magic-1-378665.mp3" loop preload="auto"></audio>
+
+
+
+
+    <div class="controls">
+       
+        <button id="resetBtn" onclick="resetBook()">Réinitialiser</button>
+        <button id="themeBtn" onclick="toggleTheme()">Changer d'ambiance</button>
+        <button onclick="rainbowParticles()">Particules</button>
+        <button onclick="shakeBook()">Secouer</button>
+        <button onclick="flyPages()">Vent</button>
+        <button onclick="toggleFire()">Feu</button>
+        <button onclick="toggleLumiere()">Lumière</button>
+        <button onclick="startWriting()">Écriture</button>
+   
+        
+ </div>
+    
+    
+  <div class="book-container" id="bookContainer" onclick="toggleBook()">
+      
+    <div class="book">
+         
+        <div id="particleOrigin"></div>
+        <div id="lumiereOrigin"></div>
+
+        
+        <div class="page back-cover"></div>
+        <div class="spine"></div>
+
+        <div class="page inner-page p3">
+            <div class="page-content">
+                <p>...et la magie commence.</p>
+            </div>
+        </div>
+        <div class="page inner-page p2"></div>
+        <div class="page inner-page p1"></div>
+
+        <div class="page front-cover">
+            <div class="cover-content">
+                <h1>Le Grimoire</h1>
+                <div class="ornament"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="script.js"></script>
+</body>
+</html>
