@@ -345,23 +345,17 @@ button:hover { background: var(--gold); color: #000; transform: scale(1.05); }
 
 /* LUMIÈRE */
 .magic-light {
-    width: 20px;           /* largura fina como um sabre */
-    height: 300px;         /* altura do sabre */
+    width: 20px;
+    height: 300px;
     background: linear-gradient(to top, rgba(0,255,255,0.9), rgba(0,255,255,0.5), rgba(0,255,255,0.0));
-    border-radius: 10px;   /* ponta arredondada */
+    border-radius: 10px;
     pointer-events: none;
     position: absolute;
-    z-index: 100;          /* acima do livro, mas pode ajustar se necessário */
+    z-index: 100; /* na frente do livro */
     filter: blur(8px) brightness(3);
-    transform-origin: center bottom; /* faz crescer a partir do centro inferior */
-    animation: sabreExpand 0.5s ease-out forwards;
+    transform-origin: center bottom;
 }
 
-@keyframes sabreExpand {
-    0% { transform: scaleY(0); opacity: 0; }
-    80% { transform: scaleY(1.2); opacity: 1; }
-    100% { transform: scaleY(1); opacity: 1; }
-}
 
 
 /* --- ECRITURE --- */
