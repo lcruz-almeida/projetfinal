@@ -1,14 +1,18 @@
+// ========================= VARIÁVEIS GLOBAIS =========================
 const bookContainer = document.getElementById('bookContainer');
 const body = document.body;
 let isOpen = false;
-let particleInterval;
-let magicTimeout;
-let fireInterval = null;
+let particleInterval = null;
+let particlesActive = false;
+let fireActive = false;
+let fireBox = null;
+let sparkLoop = null;
+let lumiereActive = false;
+let lumiereInterval = null;
+let writingActive = false;
+let writingInterval = null;
 
-// Cores mágicas para partículas
-const colors = ['#ffd700', '#ff9a9e', '#a18cd1', '#ffffff', '#84fab0'];
-
-// FUNÇÃO PARA TOCAR SOM
+// ========================= SONS =========================
 function playSound(audioId) {
     const audio = document.getElementById(audioId);
     if (audio) {
@@ -17,7 +21,6 @@ function playSound(audioId) {
     }
 }
 
-// FUNÇÃO PARA PARAR SOM
 function stopSound(audioId) {
     const audio = document.getElementById(audioId);
     if (audio) {
@@ -26,68 +29,34 @@ function stopSound(audioId) {
     }
 }
 
-// =======================
-// ⛔ FUNÇÃO CENTRAL: PARA TODOS OS EFEITOS E SONS
-// =======================
-function stopAllEffects() {
-    // PARTICULES
-    particlesActive = false;
-    stopMagic();
-    stopSound("soundParticles");
-
-    // FEU
-    fireActive = false;
-    stopFire();
-
-    // VENT
-    stopSound("soundWind");
-
-    // SECOUER
-    bookContainer.classList.remove("shake");
-    stopSound("soundShake");
-
-    // LUMIÈRE
-    lumiereActive = false;
-    if (lumiereInterval) clearInterval(lumiereInterval);
-    lumiereInterval = null;
-    document.querySelectorAll(".magic-light").forEach(el => el.remove());
-    stopSound("soundLumiere");
-
-    // ÉCRITURE
-    stopWriting();
-}
-
-// Alternar tema (dark/light)
+// ========================= TEMAS =========================
 function toggleTheme() {
     body.classList.toggle('dark-mode');
     body.style.transition = 'background 1.5s ease, color 1.5s ease';
     setTimeout(() => { body.style.transition = ''; }, 1600);
 }
 
-// Abrir/fechar livro
+// ========================= LIVRO =========================
 function toggleBook() {
     isOpen = !isOpen;
-
     if (isOpen) {
         bookContainer.classList.add('open');
-
         const pageTurnDelay = 200;
         setTimeout(() => playSound('soundPage'), 300);
         setTimeout(() => playSound('soundPage'), 300 + pageTurnDelay);
         setTimeout(() => playSound('soundPage'), 300 + 2 * pageTurnDelay);
-
-    } else { 
-        bookContainer.classList.remove('open'); 
-        clearTimeout(magicTimeout); 
+    } else {
+        bookContainer.classList.remove('open');
+        clearTimeout(magicTimeout);
         stopAllEffects();
     }
 }
-    
-// BUTTON PARTICULES
-let particlesActive = false;
 
+// ========================= PARTICULAS =========================
 function createParticle() {
     if (!isOpen) return;
+
+    const colors = ['#ffd700', '#ff9a9e', '#a18cd1', '#ffffff', '#84fab0'];
 
     const particle = document.createElement('div');
     particle.classList.add('particle');
@@ -108,10 +77,6 @@ function createParticle() {
     const startX = origin.left + origin.width / 2;
     const startY = origin.top + origin.height / 2;
 
-    particle.style.left = startX + "px";
-    particle.style.top = startY + "px";
-    particle.style.position = "fixed";
-
     const tx = (Math.random() - 0.5) * 120;
     const txEnd = (Math.random() - 0.5) * 700;
     particle.style.setProperty('--tx', `${tx}px`);
@@ -124,15 +89,6 @@ function createParticle() {
     setTimeout(() => particle.remove(), duration * 1000);
 }
 
-function rainbowParticles() {
-    if (!isOpen) return;
-
-    stopAllEffects(); // ⛔ PARA TUDO
-    startMagic();
-    playSound("soundParticles"); 
-    particlesActive = true;
-}
-
 function startMagic() {
     stopMagic();
     for (let i = 0; i < 100; i++) setTimeout(createParticle, i * 15);
@@ -143,20 +99,28 @@ function stopMagic() {
     if (particleInterval) clearInterval(particleInterval);
 }
 
-// BUTTON VENT
+// Função do botão Partículas
+function rainbowParticles() {
+    if (!isOpen) return;
+    stopAllEffects();
+    startMagic();
+    playSound("soundParticles");
+    particlesActive = true;
+}
+
+// ========================= VENTO =========================
 function flyPages() {
     if (!isOpen) return;
-
-    stopAllEffects(); // ⛔ PARA TUDO
+    stopAllEffects();
 
     const windSound = document.getElementById('soundWind');
     windSound.currentTime = 0;
     windSound.play().catch(e => console.log("Erro de áudio: " + e));
-    
+
     const pages = document.querySelectorAll('.page:not(.front-cover):not(.back-cover)');
     const repeat = 10;
     const totalClones = pages.length * repeat;
-  
+
     for (let i = 0; i < totalClones; i++) {
         setTimeout(() => {
             const page = pages[i % pages.length];
@@ -187,109 +151,132 @@ function flyPages() {
             setTimeout(() => flyingPage.remove(), 4000);
         }, i * 100);
     }
-    
+
     setTimeout(() => {
         windSound.pause();
         windSound.currentTime = 0;
     }, 4000 + totalClones * 50);
 }
 
-// BUTTON SECOUER
+// ========================= SACUDIR LIVRO =========================
 function shakeBook() {
-    stopAllEffects(); // ⛔ PARA TUDO
+    if (!isOpen) toggleBook();
+    stopAllEffects();
 
-    if (!isOpen) {
-        toggleBook();
-        setTimeout(() => {
-            bookContainer.classList.add('shake');
-            playSound("soundShake");
-            setTimeout(() => {
-                bookContainer.classList.remove('shake');
-                stopSound("soundShake");
-            }, 500);
-        }, 1200);
-    } else {
-        bookContainer.classList.add('shake');
-        playSound("soundShake");
-        setTimeout(() => {
-            bookContainer.classList.remove('shake');
-            stopSound("soundShake");
-        }, 2000);
-    }
+    bookContainer.classList.add('shake');
+    playSound("soundShake");
+
+    setTimeout(() => {
+        bookContainer.classList.remove('shake');
+        stopSound("soundShake");
+    }, 500);
 }
 
-// BUTTON LUMIERE
-let lumiereActive = false;
-let lumiereInterval = null;
+// ========================= FOGO =========================
+function startFire() {
+    stopFire();
 
+    fireBox = document.createElement("div");
+    fireBox.classList.add("fire-container");
+
+    const f1 = document.createElement("div");
+    f1.classList.add("flame");
+    const f2 = document.createElement("div");
+    f2.classList.add("flame", "small");
+    const f3 = document.createElement("div");
+    f3.classList.add("flame", "small2");
+    const smoke = document.createElement("div");
+    smoke.classList.add("smoke");
+
+    fireBox.appendChild(f1);
+    fireBox.appendChild(f2);
+    fireBox.appendChild(f3);
+    fireBox.appendChild(smoke);
+    document.body.appendChild(fireBox);
+
+    playSound("soundFire");
+}
+
+function stopFire() {
+    if (fireBox) {
+        fireBox.remove();
+        fireBox = null;
+    }
+    if (sparkLoop) {
+        clearInterval(sparkLoop);
+        sparkLoop = null;
+    }
+    stopSound("soundFire");
+}
+
+function toggleFire() {
+    if (!isOpen) return;
+    stopAllEffects();
+    startFire();
+    fireActive = true;
+}
+
+// ========================= LUMIÈRE =========================
 function createMagicLight() {
     if (!isOpen) return;
-
     const light = document.createElement('div');
     light.classList.add('magic-light');
 
-    const bookRect = document.getElementById('bookContainer').getBoundingClientRect();
+    const bookRect = bookContainer.getBoundingClientRect();
     const lightWidth = 300;
     const lightHeight = 300;
-    const x = bookRect.left + bookRect.width / 2 - lightWidth / 2;
-    const y = bookRect.top - lightHeight / 2; // acima do livro
+    const x = bookRect.left + bookRect.width / 2 - lightWidth / 2 - 80;
+    const y = bookRect.top + bookRect.height / 2 - lightHeight / 2;
 
-    document.body.appendChild(light);
     light.style.left = `${x}px`;
     light.style.top = `${y}px`;
     light.style.position = 'fixed';
     light.style.zIndex = 9999;
     light.style.transform = 'none';
 
+    document.body.appendChild(light);
     setTimeout(() => light.remove(), 1000);
 }
 
-function toggleLumiere() {
+function toggleLumiere(forceOff = false) {
     if (!isOpen) return;
-
-    stopAllEffects(); // ⛔ PARA TUDO
 
     const audio = document.getElementById("soundLumiere");
-    if (audio) { audio.currentTime = 0; audio.play().catch(()=>{}); }
 
-    lumiereInterval = setInterval(createMagicLight, 200);
-    lumiereActive = true;
+    if (forceOff || lumiereActive) {
+        if (audio) { audio.pause(); audio.currentTime = 0; }
+        clearInterval(lumiereInterval);
+        lumiereInterval = null;
+        document.querySelectorAll('.magic-light').forEach(el => el.remove());
+        lumiereActive = false;
+    } else {
+        if (audio) { audio.currentTime = 0; audio.play().catch(e => console.log("Erro de áudio: " + e)); }
+        lumiereInterval = setInterval(createMagicLight, 200);
+        lumiereActive = true;
+    }
 }
 
-// BUTTON FEU
-let fireActive = false;
-let fireBox = null;
-
-function toggleFire() {
-    if (!isOpen) return;
-
-    stopAllEffects(); // ⛔ PARA TUDO
-
-    startFire();
-    fireActive = true;
+function toggleLumiereButton() {
+    stopAllEffects();
+    toggleLumiere();
 }
 
-// BUTTON ÉCRITURE
-const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-let writingActive = false;
-let writingInterval = null;
-
+// ========================= ESCRITA =========================
 function startWriting() {
     if (!isOpen) toggleBook();
+    stopAllEffects();
 
-    stopAllEffects(); // ⛔ PARA TUDO
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const colors = ['red','blue','green','yellow','pink'];
 
     writingActive = true;
     playSound("soundWriting");
 
     writingInterval = setInterval(() => {
-        const bookRect = document.getElementById('bookContainer').getBoundingClientRect();
+        const bookRect = bookContainer.getBoundingClientRect();
         const letter = document.createElement('div');
         letter.classList.add('bouncing-letter');
-
         letter.textContent = letters.charAt(Math.floor(Math.random() * letters.length));
-
-        const colors = ['red','blue','green','yellow','pink'];
         letter.style.color = colors[Math.floor(Math.random() * colors.length)];
 
         const x = bookRect.left + Math.random() * bookRect.width;
@@ -310,17 +297,37 @@ function stopWriting() {
     writingActive = false;
     if (writingInterval) clearInterval(writingInterval);
     writingInterval = null;
-
     document.querySelectorAll('.bouncing-letter').forEach(el => el.remove());
     stopSound("soundWriting");
 }
 
-// RESET
+// ========================= STOP ALL EFFECTS =========================
+function stopAllEffects() {
+    stopMagic();
+    stopSound("soundParticles");
+    particlesActive = false;
+
+    stopFire();
+    fireActive = false;
+
+    toggleLumiere(true);
+    lumiereActive = false;
+
+    stopWriting();
+    writingActive = false;
+
+    const windSound = document.getElementById('soundWind');
+    if (windSound) { windSound.pause(); windSound.currentTime = 0; }
+
+    document.querySelectorAll('.particle, .fire-container, .magic-light, .bouncing-letter').forEach(el => el.remove());
+}
+
+// ========================= RESET LIVRO =========================
 function resetBook() {
     isOpen = false;
     bookContainer.classList.remove('open');
-    if (document.body.classList.contains('dark-mode')) document.body.classList.remove('dark-mode');
+
+    if (body.classList.contains('dark-mode')) body.classList.remove('dark-mode');
 
     stopAllEffects();
-    document.querySelectorAll('.particle, .fire, .magic.beam').forEach(el => el.remove());   
 }
