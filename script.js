@@ -13,6 +13,9 @@ let writingActive = false;
 let writingInterval = null;
 let windTimeouts = [];
 let windInterval = null;
+let shakeActive = false;
+let shakeTimeout = null;
+
 
 
 // ========================= SONS =========================
@@ -167,19 +170,43 @@ function flyPages() {
     }
 }
 
+
 // ========================= SACUDIR LIVRO =========================
-function shakeBook() {
+function startShake() {
     if (!isOpen) toggleBook();
-    stopAllEffects();
+    stopAllEffects();        // para qualquer efeito ativo
 
     bookContainer.classList.add('shake');
     playSound("soundShake");
+    shakeActive = true;
 
-    setTimeout(() => {
-        bookContainer.classList.remove('shake');
-        stopSound("soundShake");
+    // Timeout para parar automaticamente após 2s
+    shakeTimeout = setTimeout(() => {
+        stopShake();
     }, 2000);
 }
+
+function stopShake() {
+    bookContainer.classList.remove('shake');
+    stopSound("soundShake");
+
+    if (shakeTimeout) {
+        clearTimeout(shakeTimeout);
+        shakeTimeout = null;
+    }
+
+    shakeActive = false;
+}
+
+// Função do botão
+function shakeBookButton() {
+    if (!shakeActive) {
+        startShake();
+    } else {
+        stopShake();
+    }
+}
+
 
 // ========================= FOGO =========================
 function startFire() {
@@ -319,7 +346,6 @@ function stopWriting() {
 }
 
 // ========================= STOP ALL EFFECTS =========================
-// ========================= STOP ALL EFFECTS =========================
 function stopAllEffects() {
     stopMagic();
     stopSound("soundParticles");
@@ -328,7 +354,9 @@ function stopAllEffects() {
     stopFire();
     fireActive = false;
 
-    stopWind();              // ✅ vento agora para sempre
+    stopWind();     
+    
+    stopShake(); 
 
     toggleLumiere(true);
     lumiereActive = false;
@@ -365,4 +393,7 @@ function stopWind() {
         windSound.currentTime = 0;
     }
 }
+
+
+
 
