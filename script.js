@@ -138,7 +138,7 @@ function flyPages() {
 
             const page = pages[i % pages.length];
             const flyingPage = page.cloneNode(true);
-            flyingPage.classList.add('flying-page'); // adiciona classe para identificar
+            flyingPage.classList.add('flying-page');
             const rect = page.getBoundingClientRect();
 
             flyingPage.style.position = 'absolute';
@@ -379,6 +379,8 @@ function stopWind() {
         windSound.pause();
         windSound.currentTime = 0;
     }
+    // Remove imediatamente todas as páginas voando
+    document.querySelectorAll('.flying-page').forEach(el => el.remove());
 }
 
 function stopShake() {
