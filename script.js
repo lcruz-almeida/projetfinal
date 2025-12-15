@@ -354,9 +354,11 @@ function stopAllEffects() {
     stopFire();
     fireActive = false;
 
-    stopWind();     
-    
-    stopShake(); 
+    stopWind();
+    windActive = false;
+
+    stopShake();
+    shakeActive = false;
 
     toggleLumiere(true);
     lumiereActive = false;
@@ -368,6 +370,7 @@ function stopAllEffects() {
         '.particle, .fire-container, .magic-light, .bouncing-letter'
     ).forEach(el => el.remove());
 }
+
 
 
 
