@@ -174,18 +174,16 @@ function flyPages() {
 function shakeBook() {
     if (!isOpen) toggleBook();
 
-    // Remove a classe antes de adicionar para reiniciar a animação
+    // Remove a classe antes de adicionar de novo
     bookContainer.classList.remove('shake');
-
-    // Força reflow para reiniciar a animação
-    void bookContainer.offsetWidth;
+    void bookContainer.offsetWidth; // força reflow
 
     bookContainer.classList.add('shake');
     playSound("soundShake");
 
-    setTimeout(() => {
-        bookContainer.classList.remove('shake');
-        stopSound("soundShake");
+    // Timeout para parar automaticamente
+    shakeTimeout = setTimeout(() => {
+        stopShake();
     }, 2000);
 }
 
@@ -376,6 +374,16 @@ function stopWind() {
     if (windSound) {
         windSound.pause();
         windSound.currentTime = 0;
+    }
+}
+
+function stopShake() {
+    bookContainer.classList.remove('shake');
+    stopSound("soundShake");
+
+    if (shakeTimeout) {
+        clearTimeout(shakeTimeout);
+        shakeTimeout = null;
     }
 }
 
