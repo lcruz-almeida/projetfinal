@@ -176,7 +176,9 @@ function flyPages() {
 function shakeBook() {
     if (!isOpen) toggleBook();
 
-    // Remove a classe antes de adicionar de novo
+    stopAllEffects();
+    shakeActive = true;
+ 
     bookContainer.classList.remove('shake');
     void bookContainer.offsetWidth; // força reflow
 
