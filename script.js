@@ -11,6 +11,9 @@ let lumiereActive = false;
 let lumiereInterval = null;
 let writingActive = false;
 let writingInterval = null;
+let windTimeouts = [];
+let windInterval = null;
+
 
 // ========================= SONS =========================
 function playSound(audioId) {
@@ -111,18 +114,25 @@ function rainbowParticles() {
 // ========================= VENTO =========================
 function flyPages() {
     if (!isOpen) return;
+
     stopAllEffects();
+    windActive = true;
 
     const windSound = document.getElementById('soundWind');
     windSound.currentTime = 0;
-    windSound.play().catch(e => console.log("Erro de áudio: " + e));
+    windSound.play().catch(e => console.log(e));
 
     const pages = document.querySelectorAll('.page:not(.front-cover):not(.back-cover)');
     const repeat = 10;
     const totalClones = pages.length * repeat;
 
     for (let i = 0; i < totalClones; i++) {
-        setTimeout(() => {
+
+        const timeout = setTimeout(() => {
+
+            // 🔴 se o vento foi parado, não faz nada
+            if (!windActive) return;
+
             const page = pages[i % pages.length];
             const flyingPage = page.cloneNode(true);
             const rect = page.getBoundingClientRect();
@@ -140,22 +150,21 @@ function flyPages() {
 
             const endX = (Math.random() - 0.5) * window.innerWidth * 2;
             const endY = (Math.random() - 0.5) * window.innerHeight * 2;
-            const rotateX = (Math.random() - 0.5) * 1080;
-            const rotateY = (Math.random() - 0.5) * 1080;
+            const rotate = (Math.random() - 0.5) * 1080;
 
             requestAnimationFrame(() => {
-                flyingPage.style.transform = `translate(${endX}px, ${endY}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                flyingPage.style.transform =
+                    `translate(${endX}px, ${endY}px) rotate(${rotate}deg)`;
                 flyingPage.style.opacity = 0;
             });
 
             setTimeout(() => flyingPage.remove(), 4000);
-        }, i * 100);
-    }
 
-    setTimeout(() => {
-        windSound.pause();
-        windSound.currentTime = 0;
-    }, 4000 + totalClones * 50);
+        }, i * 100);
+
+    
+        windTimeouts.push(timeout);
+    }
 }
 
 // ========================= SACUDIR LIVRO =========================
@@ -172,7 +181,6 @@ function shakeBook() {
     }, 2000);
 }
 
-// ========================= FOGO =========================
 // ========================= FOGO =========================
 function startFire() {
     stopFire();
@@ -311,6 +319,7 @@ function stopWriting() {
 }
 
 // ========================= STOP ALL EFFECTS =========================
+// ========================= STOP ALL EFFECTS =========================
 function stopAllEffects() {
     stopMagic();
     stopSound("soundParticles");
@@ -319,17 +328,20 @@ function stopAllEffects() {
     stopFire();
     fireActive = false;
 
+    stopWind();              // ✅ vento agora para sempre
+
     toggleLumiere(true);
     lumiereActive = false;
 
     stopWriting();
     writingActive = false;
 
-    const windSound = document.getElementById('soundWind');
-    if (windSound) { windSound.pause(); windSound.currentTime = 0; }
-
-    document.querySelectorAll('.particle, .fire-container, .magic-light, .bouncing-letter').forEach(el => el.remove());
+    document.querySelectorAll(
+        '.particle, .fire-container, .magic-light, .bouncing-letter'
+    ).forEach(el => el.remove());
 }
+
+
 
 // ========================= RESET LIVRO =========================
 function resetBook() {
@@ -340,3 +352,17 @@ function resetBook() {
 
     stopAllEffects();
 }
+
+function stopWind() {
+    windActive = false;
+
+    windTimeouts.forEach(t => clearTimeout(t));
+    windTimeouts = [];
+
+    const windSound = document.getElementById('soundWind');
+    if (windSound) {
+        windSound.pause();
+        windSound.currentTime = 0;
+    }
+}
+
