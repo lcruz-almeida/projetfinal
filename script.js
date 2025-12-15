@@ -118,7 +118,6 @@ function rainbowParticles() {
 function flyPages() {
     if (!isOpen) return;
 
-    stopAllEffects();
     windActive = true;
 
     const windSound = document.getElementById('soundWind');
@@ -174,7 +173,6 @@ function flyPages() {
 // ========================= SACUDIR LIVRO =========================
 function startShake() {
     if (!isOpen) toggleBook();
-    stopAllEffects();        // para qualquer efeito ativo
 
     bookContainer.classList.add('shake');
     playSound("soundShake");
