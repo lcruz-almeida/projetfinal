@@ -181,7 +181,7 @@ function shakeBook() {
     bookContainer.classList.add('shake');
     playSound("soundShake");
 
-    // Timeout para parar automaticamente
+    // Timeout para parar automaticamente após 2s
     shakeTimeout = setTimeout(() => {
         stopShake();
     }, 2000);
@@ -386,6 +386,7 @@ function stopShake() {
         shakeTimeout = null;
     }
 }
+
 
 
 
