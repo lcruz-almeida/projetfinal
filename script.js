@@ -172,16 +172,16 @@ function flyPages() {
 
 // ========================= SACUDIR LIVRO =========================
 function startShake() {
-    if (!isOpen) toggleBook();
+    if (!isOpen) toggleBook(); // abre o livro se fechado
+
+    if (shakeActive) return; // evita ativar duas vezes
 
     bookContainer.classList.add('shake');
     playSound("soundShake");
     shakeActive = true;
 
-    // Timeout para parar automaticamente após 2s
-    shakeTimeout = setTimeout(() => {
-        stopShake();
-    }, 2000);
+    // Para automaticamente após 2s
+    shakeTimeout = setTimeout(() => stopShake(), 2000);
 }
 
 function stopShake() {
@@ -194,15 +194,6 @@ function stopShake() {
     }
 
     shakeActive = false;
-}
-
-// Função do botão
-function shakeBookButton() {
-    if (!shakeActive) {
-        startShake();
-    } else {
-        stopShake();
-    }
 }
 
 
