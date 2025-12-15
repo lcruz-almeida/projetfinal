@@ -171,29 +171,22 @@ function flyPages() {
 
 
 // ========================= SACUDIR LIVRO =========================
-function startShake() {
-    if (!isOpen) toggleBook(); // abre o livro se fechado
+function shakeBook() {
+    if (!isOpen) toggleBook();
 
-    if (shakeActive) return; // evita ativar duas vezes
+    // Remove a classe antes de adicionar para reiniciar a animação
+    bookContainer.classList.remove('shake');
+
+    // Força reflow para reiniciar a animação
+    void bookContainer.offsetWidth;
 
     bookContainer.classList.add('shake');
     playSound("soundShake");
-    shakeActive = true;
 
-    // Para automaticamente após 2s
-    shakeTimeout = setTimeout(() => stopShake(), 2000);
-}
-
-function stopShake() {
-    bookContainer.classList.remove('shake');
-    stopSound("soundShake");
-
-    if (shakeTimeout) {
-        clearTimeout(shakeTimeout);
-        shakeTimeout = null;
-    }
-
-    shakeActive = false;
+    setTimeout(() => {
+        bookContainer.classList.remove('shake');
+        stopSound("soundShake");
+    }, 2000);
 }
 
 
