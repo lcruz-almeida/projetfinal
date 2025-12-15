@@ -160,7 +160,7 @@ function flyPages() {
 
             setTimeout(() => flyingPage.remove(), 4000);
 
-        }, i * 100);
+        }, i * 50);
 
     
         windTimeouts.push(timeout);
