@@ -119,8 +119,8 @@ function flyPages() {
     if (!isOpen) return;
 
     stopAllEffects();
-    
     windActive = true;
+   
 
     const windSound = document.getElementById('soundWind');
     windSound.currentTime = 0;
