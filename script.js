@@ -118,9 +118,11 @@ function rainbowParticles() {
 function flyPages() {
     if (!isOpen) return;
 
-    stopAllEffects();
+    stopAllEffects(); // para todos os efeitos ativos
     windActive = true;
-   
+
+    // remove folhas voando antigas
+    document.querySelectorAll('.flying-page').forEach(el => el.remove());
 
     const windSound = document.getElementById('soundWind');
     windSound.currentTime = 0;
@@ -131,14 +133,12 @@ function flyPages() {
     const totalClones = pages.length * repeat;
 
     for (let i = 0; i < totalClones; i++) {
-
         const timeout = setTimeout(() => {
-
-            // 🔴 se o vento foi parado, não faz nada
             if (!windActive) return;
 
             const page = pages[i % pages.length];
             const flyingPage = page.cloneNode(true);
+            flyingPage.classList.add('flying-page'); // adiciona classe para identificar
             const rect = page.getBoundingClientRect();
 
             flyingPage.style.position = 'absolute';
@@ -166,10 +166,10 @@ function flyPages() {
 
         }, i * 50);
 
-    
         windTimeouts.push(timeout);
     }
 }
+
 
 
 // ========================= SACUDIR LIVRO =========================
